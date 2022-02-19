@@ -3,12 +3,6 @@ import streamlit as st
 from streamlit_image_comparison import image_comparison
 
 
-IMAGE_TO_URL = {
-    "sample_image_1": "https://user-images.githubusercontent.com/34196005/143309873-c0c1f31c-c42e-4a36-834e-da0a2336bb19.jpg",
-    "sample_image_2": "https://user-images.githubusercontent.com/34196005/143309867-42841f5a-9181-4d22-b570-65f90f2da231.jpg",
-}
-
-
 st.set_page_config(
     page_title="Streamlit Image Comparison",
     page_icon="🔥",
@@ -27,7 +21,6 @@ def load_image(image_file):
 with st.form(key="Streamlit Image Comparison"):
     # image one inputs
     col1, col2 = st.sidebar.columns([3, 1])
-    img1_url = IMAGE_TO_URL["sample_image_1"]
     with col1:
         img1 = st.sidebar.file_uploader("Left Image", type=["png", "jpg", "jpeg"])
     with col2:
@@ -35,10 +28,11 @@ with st.form(key="Streamlit Image Comparison"):
     
     if img1 is not None:
         img1_url = Image.open(img1)
+    else:
+        img1_url = Image.open("resources/sample_image_1.jpg")
 
     # image two inputs
     col1, col2 = st.sidebar.columns([3, 1])
-    img2_url = IMAGE_TO_URL["sample_image_2"]
     with col1:
         img2 = st.sidebar.file_uploader("Right Image", type=["png", "jpg", "jpeg"])
     with col2:
@@ -46,7 +40,9 @@ with st.form(key="Streamlit Image Comparison"):
 
     if img2 is not None:
         img2_url = Image.open(img2)
-        
+    else:
+        img2_url = Image.open("resources/sample_image_2.jpg")
+
     # continious parameters
     col1, col2 = st.sidebar.columns([1, 1])
     with col1:

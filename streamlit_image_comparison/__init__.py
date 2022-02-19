@@ -1,5 +1,4 @@
 import streamlit.components.v1 as components
-import sahi.utils.cv
 from PIL import Image
 import base64
 import io
@@ -76,14 +75,8 @@ def image_comparison(
         Returns a static component with a timeline
     """
     # prepare images
-    if not isinstance(img1, Image.Image):
-        img1_pillow = sahi.utils.cv.read_image_as_pil(img1)
-    else: 
-        img1_pillow = img1
-    if not isinstance(img2, Image.Image):
-        img2_pillow = sahi.utils.cv.read_image_as_pil(img2)
-    else:
-        img2_pillow = img2
+    img1_pillow = img1
+    img2_pillow = img2
 
     img_width, img_height = (img1_pillow.size[0] + img2_pillow.size[0]) / 2, (img1_pillow.size[1] + img2_pillow.size[1]) / 2
     h_to_w = img_height / img_width
