@@ -1,3 +1,4 @@
+from PIL import Image
 import streamlit as st
 from streamlit_image_comparison import image_comparison
 
@@ -15,65 +16,52 @@ st.set_page_config(
     initial_sidebar_state="auto",
 )
 
-st.markdown(
-    """
-    <h2 style='text-align: center'>
-    Streamlit Image Comparison Demo
-    </h2>
-    """,
-    unsafe_allow_html=True,
-)
-st.markdown(
-    """
-    <p style='text-align: center'>
-    <br />
-    Follow me for more! <a href='https://twitter.com/fcakyon' target='_blank'> <img src="https://img.icons8.com/color/48/000000/twitter--v1.png" height="30"></a><a href='https://github.com/fcakyon' target='_blank'><img src="https://img.icons8.com/fluency/48/000000/github.png" height="27"></a><a href='https://www.linkedin.com/in/fcakyon/' target='_blank'><img src="https://img.icons8.com/fluency/48/000000/linkedin.png" height="30"></a> <a href='https://fcakyon.medium.com/' target='_blank'><img src="https://img.icons8.com/ios-filled/48/000000/medium-monogram.png" height="26"></a>
-    </p>
-    """,
-    unsafe_allow_html=True,
-)
 
-st.write("##")
+st.write("## Image Comparison Tool")
+st.write("Upload two images and use a slider to compare them.")
+
+def load_image(image_file):
+	img = Image.open(image_file)
+	return img
 
 with st.form(key="Streamlit Image Comparison"):
     # image one inputs
-    col1, col2 = st.columns([3, 1])
+    col1, col2 = st.sidebar.columns([3, 1])
+    img1_url = IMAGE_TO_URL["sample_image_1"]
     with col1:
-        img1_url = st.text_input("Image one URL:", value=IMAGE_TO_URL["sample_image_1"])
+        img1 = st.sidebar.file_uploader("Left Image", type=["png", "jpg", "jpeg"])
     with col2:
-        img1_text = st.text_input("Image one text:", value="YOLOX")
+        img1_text = st.sidebar.text_input("Left Label:", value="Original")
+    
+    if img1 is not None:
+        img1_url = Image.open(img1)
 
     # image two inputs
-    col1, col2 = st.columns([3, 1])
+    col1, col2 = st.sidebar.columns([3, 1])
+    img2_url = IMAGE_TO_URL["sample_image_2"]
     with col1:
-        img2_url = st.text_input("Image two URL:", value=IMAGE_TO_URL["sample_image_2"])
+        img2 = st.sidebar.file_uploader("Right Image", type=["png", "jpg", "jpeg"])
     with col2:
-        img2_text = st.text_input("Image two text:", value="SAHI+YOLOX")
+        img2_text = st.sidebar.text_input("Right Label:", value="Enhanced")
 
+    if img2 is not None:
+        img2_url = Image.open(img2)
+        
     # continious parameters
-    col1, col2 = st.columns([1, 1])
+    col1, col2 = st.sidebar.columns([1, 1])
     with col1:
-        starting_position = st.slider(
+        starting_position = st.sidebar.slider(
             "Starting position of the slider:", min_value=0, max_value=100, value=50
         )
     with col2:
-        width = st.slider(
+        width = st.sidebar.slider(
             "Component width:", min_value=400, max_value=1000, value=700, step=100
         )
 
     # boolean parameters
-    col1, col2, col3, col4 = st.columns([1, 3, 3, 3])
+    col1, col2 = st.sidebar.columns([1, 1])
     with col2:
-        show_labels = st.checkbox("Show labels", value=True)
-    with col3:
-        make_responsive = st.checkbox("Make responsive", value=True)
-    with col4:
-        in_memory = st.checkbox("In memory", value=True)
-
-    # centered submit button
-    col1, col2, col3 = st.columns([6, 4, 6])
-    with col2:
-        submit = st.form_submit_button("Update Render 🔥")
+        show_labels = st.sidebar.checkbox("Show labels", value=True)
 
 static_component = image_comparison(
     img1=img1_url,
@@ -83,6 +71,6 @@ static_component = image_comparison(
     width=width,
     starting_position=starting_position,
     show_labels=show_labels,
-    make_responsive=make_responsive,
-    in_memory=in_memory,
+    make_responsive=False,
+    in_memory=False,
 )

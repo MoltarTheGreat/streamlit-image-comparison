@@ -13,7 +13,7 @@ TEMP_DIR = "temp"
 
 def pillow_to_base64(image: Image.Image):
     in_mem_file = io.BytesIO()
-    image.save(in_mem_file, format="JPEG", subsampling=0, quality=100)
+    image.convert("RGB").save(in_mem_file, format="JPEG", subsampling=0, quality=100)
     img_bytes = in_mem_file.getvalue()  # bytes
     image_str = base64.b64encode(img_bytes).decode("utf-8")
     base64_src = f"data:image/jpg;base64,{image_str}"
@@ -32,15 +32,15 @@ def local_file_to_base64(image_path: str):
 def pillow_local_file_to_base64(image: Image.Image):
     # pillow to local file
     img_path = TEMP_DIR + "/" + str(uuid.uuid4()) + ".jpg"
-    image.save(img_path, subsampling=0, quality=100)
+    image.convert("RGB").save(img_path, subsampling=0, quality=100)
     # local file base64 str
     base64_src = local_file_to_base64(img_path)
     return base64_src
 
 
 def image_comparison(
-    img1: str,
-    img2: str,
+    img1,
+    img2,
     label1: str = "1",
     label2: str = "2",
     width: int = 700,
@@ -76,10 +76,16 @@ def image_comparison(
         Returns a static component with a timeline
     """
     # prepare images
-    img1_pillow = sahi.utils.cv.read_image_as_pil(img1)
-    img2_pillow = sahi.utils.cv.read_image_as_pil(img2)
+    if not isinstance(img1, Image.Image):
+        img1_pillow = sahi.utils.cv.read_image_as_pil(img1)
+    else: 
+        img1_pillow = img1
+    if not isinstance(img2, Image.Image):
+        img2_pillow = sahi.utils.cv.read_image_as_pil(img2)
+    else:
+        img2_pillow = img2
 
-    img_width, img_height = img1_pillow.size
+    img_width, img_height = (img1_pillow.size[0] + img2_pillow.size[0]) / 2, (img1_pillow.size[1] + img2_pillow.size[1]) / 2
     h_to_w = img_height / img_width
     height = (width * h_to_w) * 0.95
 
